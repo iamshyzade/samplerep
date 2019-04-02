@@ -1,0 +1,12 @@
+{
+  "minMuleVersion": "4.1.4",
+  "classLoaderModelLoaderDescriptor": {
+        "id": "mule",
+        "attributes": {
+            "exportedResources": [
+                "beans.xml"
+            ]
+        }
+    }
+  }
+  
