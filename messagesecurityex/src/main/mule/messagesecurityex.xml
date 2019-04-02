@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:vm="http://www.mulesoft.org/schema/mule/vm" xmlns:crypto="http://www.mulesoft.org/schema/mule/crypto"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/crypto http://www.mulesoft.org/schema/mule/crypto/current/mule-crypto.xsd
+http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="8cc80a56-b08a-4e6b-9ff6-3ac8992a38f2" >
+		<http:listener-connection host="localhost" port="8098" />
+	</http:listener-config>
+	<vm:config name="VM_Config" doc:name="VM Config" doc:id="bf6638b6-2b5d-41ff-84d4-fd6730fed894" >
+		<vm:queues >
+			<vm:queue queueName="saifexQ" queueType="PERSISTENT"/>
+			<vm:queue queueName="MauleshQ" />
+		</vm:queues>
+	</vm:config>
+	<flow name="messagesecurityexFlow" doc:id="fc45feef-e9aa-4544-af4b-e2e146a4fe75" >
+		<http:listener doc:name="Listener" doc:id="1242a5e8-1624-4d1f-aa59-a7be537863d9" config-ref="HTTP_Listener_config" path="/MSEX" outputMimeType="application/json" allowedMethods="POST"/>
+		<crypto:jce-encrypt-pbe doc:name="Jce encrypt pbe" doc:id="882efeeb-4f70-4c79-89bd-8bbee8ed4995" password="12345"/>
+		<logger level="INFO" doc:name="Logger" doc:id="979017a6-edaf-43d2-9f88-0a84b08837c8" message="message after encryption is ============#[payload]"/>
+		<vm:publish queueName="saifexQ" doc:name="Publish" doc:id="5879a965-90e2-4761-9be9-ee13e438701f" config-ref="VM_Config"/>
+	</flow>
+	<flow name="messagesecurityexFlow1" doc:id="6b68670e-9cb8-4409-b07e-04dcf60aef7f" >
+		<vm:listener queueName="saifexQ" doc:name="Listener" doc:id="b8f7a060-d590-4c36-9a0a-8160ebb7f635" config-ref="VM_Config"/>
+		<crypto:jce-decrypt-pbe doc:name="Jce decrypt pbe" doc:id="2e1a16cb-95cf-445a-a904-8630a85afc93" password="12345"/>
+		<logger level="INFO" doc:name="Logger" doc:id="ef37599e-a726-461a-943d-54f237b495ab" message="message after decrypt is ==================== #[payload]"/>
+	</flow>
+</mule>

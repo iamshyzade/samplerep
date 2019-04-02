@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:vm="http://www.mulesoft.org/schema/mule/vm"
+	xmlns:crypto="http://www.mulesoft.org/schema/mule/crypto"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/crypto http://www.mulesoft.org/schema/mule/crypto/current/mule-crypto.xsd
+http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:listener-config name="HTTP_Listener_config1" doc:name="HTTP Listener config" doc:id="fdef7cee-dbf2-4563-9903-c3ab0dced0fc" >
+		<http:listener-connection host="0.0.0.0" port="8092" />
+	</http:listener-config>
+	<crypto:jce-config name="Crypto_Jce" doc:name="Crypto Jce" doc:id="c753843c-7bbb-410a-92f2-e3227dbb20ff" keystore="C:\Users\iamsh\AnypointStudio\MuleJan1\messagesecurityex\src\main\resources\saifmule.jceks" type="JCEKS" password="12345678" >
+		<crypto:jce-key-infos >
+			<crypto:jce-symmetric-key-info keyId="saifmulekey" alias="saifkeyalias" password="12345678" />
+		</crypto:jce-key-infos>
+	</crypto:jce-config>
+	<crypto:jce-config name="Crypto_Jce1" doc:name="Crypto Jce" doc:id="25c4da9d-e3df-4669-bdcf-86d622c4a27e" keystore="C:\Users\iamsh\AnypointStudio\MuleJan1\messagesecurityex\src\main\resources\saifmule.jceks" type="JCEKS" password="12345678" >
+		<crypto:jce-key-infos >
+			<crypto:jce-symmetric-key-info keyId="saifmulekey" alias="saifkeyalias" password="12345678" />
+		</crypto:jce-key-infos>
+	</crypto:jce-config>
+	<flow name="JCE_MessageSecurityFlow" doc:id="b7ff882f-b4a3-4322-b284-15e2a955fc2b" >
+		<http:listener doc:name="Listener" doc:id="debe2f21-e03b-4ba8-8e3f-7e7866c29466" config-ref="HTTP_Listener_config1" path="/JCEMS" outputMimeType="application/json" allowedMethods="POST"/>
+		<crypto:jce-encrypt doc:name="Jce encrypt" doc:id="145477cb-53c6-4f7e-b2d1-0cc805e374e9" config-ref="Crypto_Jce" algorithm="AES" keyId="saifmulekey">
+			<crypto:content ><![CDATA[#[payload.employee.essn]]]></crypto:content>
+		</crypto:jce-encrypt>
+		<logger level="INFO" doc:name="Logger" doc:id="c13a3ce0-ea24-4241-b9c5-a16d39b3e568" message="payload after encryption is #[payload]"/>
+		<vm:publish queueName="MauleshQ" doc:name="Publish" doc:id="a46041b7-ee68-470d-95be-bafcf6af4859" config-ref="VM_Config"/>
+	</flow>
+	<flow name="JCE_MessageSecurityFlow1" doc:id="2658c829-f586-4413-9e55-26b1c46e960b" >
+		<vm:listener queueName="MauleshQ" doc:name="Listener" doc:id="47a2ba35-d13e-4b7f-9e7a-b094ce2b02a0" config-ref="VM_Config"/>
+		<crypto:jce-decrypt doc:name="Jce decrypt" doc:id="14ac6d94-54fe-4864-b165-6d427bc54b5f" config-ref="Crypto_Jce" algorithm="AES" keyId="saifmulekey">
+		</crypto:jce-decrypt>
+		<logger level="INFO" doc:name="Logger" doc:id="9c0c0509-db14-4672-9612-e38a8044e15f" message="after decrption #[payload]"/>
+	</flow>
+</mule>

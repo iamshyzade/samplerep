@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<types:mule xmlns:types="http://www.mulesoft.org/schema/mule/types">
+  <types:catalog>
+    <types:type name="json" format="json">
+      <types:shape format="weave" example="sample.json"><![CDATA[%dw 2.0
+type json = {|
+  name: String, 
+  ssn: Number {"typeId": "int"}
+|} {"MetadataFormat": "json",
+"example": "{\"name\":\"saif\",\"ssn\":123456789}"}
+
+]]></types:shape>
+    </types:type>
+  </types:catalog>
+</types:mule>
