@@ -25,7 +25,7 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 		<crypto:jce-encrypt doc:name="Jce encrypt" doc:id="145477cb-53c6-4f7e-b2d1-0cc805e374e9" config-ref="Crypto_Jce" algorithm="AES" keyId="saifmulekey">
 			<crypto:content ><![CDATA[#[payload.employee.essn]]]></crypto:content>
 		</crypto:jce-encrypt>
-		<logger level="INFO" doc:name="Logger" doc:id="c13a3ce0-ea24-4241-b9c5-a16d39b3e568" message="payload after encryption is #[payload]"/>
+		<logger level="INFO" doc:name="Logger" doc:id="c13a3ce0-ea24-4241-b9c5-a16d39b3e568" message="payload after encryption is given as #[payload]"/>
 		<vm:publish queueName="MauleshQ" doc:name="Publish" doc:id="a46041b7-ee68-470d-95be-bafcf6af4859" config-ref="VM_Config"/>
 	</flow>
 	<flow name="JCE_MessageSecurityFlow1" doc:id="2658c829-f586-4413-9e55-26b1c46e960b" >
